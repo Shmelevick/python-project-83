@@ -15,4 +15,5 @@ build:
 	./build.sh
 
 render-start:
-	uv run gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
+	. .venv/bin/activate && gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
+	
