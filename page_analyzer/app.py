@@ -40,17 +40,18 @@ def urls():
 
         normalized_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
 
-        with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
-            try:
+        try:
+            with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
                 cur.execute(
                     'SELECT id FROM urls WHERE name = %s;',
                     (normalized_url,)
                 )
 
                 row = cur.fetchone()
+                conn.commit()
 
-                if row is None:
-
+            if row is None:
+                with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
                     query = """
                     INSERT INTO urls (name)
                     VALUES (%s)
@@ -69,20 +70,18 @@ def urls():
                     flash('Страница успешно добавлена', 'success')
                     return redirect(url_for('url_detail', url_id=url_id))
 
-                url_id = row.id
+            url_id = row.id
 
-                conn.commit()
+            flash('Страница уже существует', 'info')
+            return redirect(url_for('url_detail', url_id=url_id))           
 
-                flash('Страница уже существует', 'info')
-                return redirect(url_for('url_detail', url_id=url_id))
-
-            except Exception as e:
-                print(f'Необработанная ошибка: {e}')
-                flash('Что-то пошло не так', 'danger')
+        except Exception as e:
+            print(f'Необработанная ошибка: {e}')
+            flash('Что-то пошло не так', 'danger')
 
             return redirect(url_for('index'))
 
-        return redirect(url_for('index'))
+        # return redirect(url_for('index'))
 
 
     elif request.method == 'GET':
