@@ -13,8 +13,9 @@ start:
 	uv run gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
 
 # Для Render
-build:
+build: |
 	pip install -r requirements.txt
+	psql -a -d $DATABASE_URL -f database.sql
 
 render-start:
 	gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app

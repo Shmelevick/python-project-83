@@ -24,6 +24,19 @@
       </nav>
     </header>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="w-100 px-0">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <main class="flex-grow-1">
       <div class="container-lg mt-5">
         <div class="row">
@@ -34,7 +47,7 @@
               <label for="url" class="visually-hidden">URL сайта</label>
               <input type="text" name="url" id="url" placeholder="https://www.example.com" class="form-control form-control-lg" required>
               <button type="submit" class="btn btn-primary btn-lg ms-3 px-4">
-                <span class="me-1">&#128269;</span> Проверить
+                <span class="me-1"></span> Проверить
               </button>
             </form>
           </div>
