@@ -50,7 +50,7 @@
         {% for url in urls %}
           <tr>
             <td>{{ url[0] }}</td>
-            <td><a href="{{ url_for('url_detail', url_id=url[0]) }}">{{ url[1] }}</a></td>
+            <td><a href="{{ url_for('routes.url_detail', url_id=url[0]) }}">{{ url[1] }}</a></td>
             <td>{{ url[3] or '' }}</td>  {# Если есть поле created_at или проверка #}
             <td>{{ url[4] or '' }}</td>  {# HTTP статус — если есть #}
           </tr>
