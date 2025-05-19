@@ -6,7 +6,7 @@ dev:
 	uv run flask --debug --app page_analyzer:app run
 
 lint:
-	uv run ruff check --fix
+	uv run ruff check
 
 PORT ?= 8000
 start:
