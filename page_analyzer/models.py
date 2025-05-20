@@ -59,7 +59,6 @@ def get_check_data(url_id):
 
 
 def check_url(url_id):
-    conn = get_db_connection()
     url = get_url_by_id(url_id)
     response = requests.get(url.name)
     response.raise_for_status()
@@ -82,6 +81,7 @@ def check_url(url_id):
 
 
 def _insert_checks(url_id, h1, status_code, title, description):
+    conn = get_db_connection()
     with conn.cursor() as cur:
         query = """
         INSERT INTO url_checks (url_id, h1, status_code, title, description)
@@ -96,6 +96,7 @@ def _insert_checks(url_id, h1, status_code, title, description):
 
 
 def _update_urls(status_code, url_id): 
+    conn = get_db_connection()
     with conn.cursor() as cur:
         query = """
         UPDATE urls
@@ -108,4 +109,3 @@ def _update_urls(status_code, url_id):
             "Вставлены 'last_check', 'status_code' = %s, url_id = %s в urls",
             status_code, url_id
         )
-
