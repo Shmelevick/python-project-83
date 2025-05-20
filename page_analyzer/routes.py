@@ -30,7 +30,7 @@ def urls():
         if not url or len(url) > 255 or not validators.url(url):
             flash('Некорректный URL', 'danger')
             logger.warning("Невалидный URL")
-            return redirect(url_for('routes.index'))
+            return render_template('index.html'), 422
 
         normalized_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
         existing = find_url_by_name(normalized_url)
@@ -77,5 +77,6 @@ def urls_checks(url_id):
         logger.error("Страница не открывается url_id= %s, %s", url_id, e)
         flash("Произошла ошибка при проверке", "danger")
         return redirect(url_for('routes.url_detail', url_id=url_id))
-
+    
+    flash('Страница успешно проверена', 'success')
     return redirect(url_for('routes.url_detail', url_id=url_id))
