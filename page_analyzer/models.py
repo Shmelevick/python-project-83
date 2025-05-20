@@ -28,7 +28,7 @@ def insert_url(name):
 def get_all_urls():
     conn = get_db_connection()
     with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
-        cur.execute('SELECT id, name FROM urls ORDER BY id DESC;')
+        cur.execute('SELECT * FROM urls ORDER BY id DESC;')
         result = cur.fetchall()
         logger.info("Получен список всех URL")
         return result
@@ -77,4 +77,21 @@ def check_url(url_id):
         """
         cur.execute(query, (url_id, h1, status_code, title, description))
         conn.commit()
-        logger.info("Вставлены данные о проверке url_id = %s", url_id)
+        logger.info(
+            "Вставлены данные о проверке url_id = %s в url_checks",
+            url_id
+        )
+    with conn.cursor() as cur:
+        query = """
+        UPDATE urls
+        SET last_check = CURRENT_DATE, status_code = %s
+        WHERE id = %s
+        """
+        print(url_id, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+        cur.execute(query, (status_code, url_id))
+        conn.commit()
+        logger.info(
+            "Вставлены 'last_check', 'status_code' url_id = %s в urls",
+            url_id
+        )
+
