@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from urllib.parse import urlparse
 import validators
+import requests
 
 from .models import (
     find_url_by_name,
@@ -70,6 +71,11 @@ def url_detail(url_id):
 
 @routes.route('/urls/<int:url_id>/checks', methods=['POST'])
 def urls_checks(url_id):
-    insert_check(url_id)
+    try:
+        insert_check(url_id)
+    except requests.exceptions.RequestException as e:
+        logger.error("Страница не открывается url_id= %s, %s", url_id, e)
+        flash("Произошла ошибка при проверке", "danger")
+        return redirect(url_for('routes.url_detail', url_id=url_id))
 
     return redirect(url_for('routes.url_detail', url_id=url_id))
