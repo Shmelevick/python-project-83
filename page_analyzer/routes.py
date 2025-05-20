@@ -37,6 +37,7 @@ def urls():
 
         if not url or len(url) > 255 or not validators.url(url):
             logger.warning("Невалидный URL")
+            flash('Некорректный URL', 'danger')
             return make_response(
                 render_template('index.html', error='Некорректный URL'),
                 422
