@@ -1,4 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    make_response
+)
 from urllib.parse import urlparse
 import validators
 import requests
@@ -28,9 +36,11 @@ def urls():
         logger.info("Получен URL из формы: %s", url)
 
         if not url or len(url) > 255 or not validators.url(url):
-            flash('Некорректный URL', 'danger')
             logger.warning("Невалидный URL")
-            return render_template('index.html'), 422
+            return make_response(
+                render_template('index.html', error='Некорректный URL'),
+                422
+            )
 
         normalized_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
         existing = find_url_by_name(normalized_url)
