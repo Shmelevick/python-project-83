@@ -52,7 +52,7 @@ def get_check_data(url_id):
         logger.info('Получены данные из url_checks по url_id: %s', url_id)
         return result
 
-def insert_check(url_id):
+def check_url(url_id):
     conn = get_db_connection()
     url = get_url_by_id(url_id)
     response = requests.get(url.name)

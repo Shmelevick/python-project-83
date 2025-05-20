@@ -17,7 +17,7 @@ from .models import (
     get_all_urls,
     get_url_by_id,
     get_check_data,
-    insert_check
+    check_url
 )
 from .logger import get_logger
 
@@ -80,7 +80,7 @@ def url_detail(url_id):
 @routes.route('/urls/<int:url_id>/checks', methods=['POST'])
 def urls_checks(url_id):
     try:
-        insert_check(url_id)
+        check_url(url_id)
     except requests.exceptions.RequestException as e:
         logger.error("Страница не открывается url_id= %s, %s", url_id, e)
         flash("Произошла ошибка при проверке", "danger")
