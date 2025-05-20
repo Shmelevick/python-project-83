@@ -7,6 +7,7 @@ from .logger import get_logger
 
 logger = get_logger(__name__)
 
+
 def find_url_by_name(name):
     conn = get_db_connection()
     with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
@@ -14,6 +15,7 @@ def find_url_by_name(name):
         result = cur.fetchone()
         logger.info("Поиск URL: %s — найден: %s", name, result is not None)
         return result
+
 
 def insert_url(name):
     conn = get_db_connection()
@@ -25,6 +27,7 @@ def insert_url(name):
         conn.commit()
         return result.id
 
+
 def get_all_urls():
     conn = get_db_connection()
     with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
@@ -33,6 +36,7 @@ def get_all_urls():
         logger.info("Получен список всех URL")
         return result
 
+
 def get_url_by_id(url_id):
     conn = get_db_connection()
     with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
@@ -40,6 +44,7 @@ def get_url_by_id(url_id):
         result = cur.fetchone()
         logger.info("Получены данные по ID %s: %s", url_id, result)
         return result
+
 
 def get_check_data(url_id):
     conn = get_db_connection()
@@ -51,6 +56,7 @@ def get_check_data(url_id):
         result = cur.fetchall()
         logger.info('Получены данные из url_checks по url_id: %s', url_id)
         return result
+
 
 def check_url(url_id):
     conn = get_db_connection()

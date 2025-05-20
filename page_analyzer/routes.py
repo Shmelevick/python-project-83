@@ -24,10 +24,12 @@ from .logger import get_logger
 routes = Blueprint('routes', __name__)
 logger = get_logger(__name__)
 
+
 @routes.route('/')
 def index():
     logger.debug("Загружена стартовая страница")
     return render_template('index.html')
+
 
 @routes.route('/urls', methods=['GET', 'POST'])
 def urls():
@@ -59,6 +61,7 @@ def urls():
     urls_list = get_all_urls()
     return render_template('urls.html', urls=urls_list)
 
+
 @routes.route('/urls/<int:url_id>')
 def url_detail(url_id):
     url_data = get_url_by_id(url_id)
@@ -76,6 +79,7 @@ def url_detail(url_id):
         created_at=url_data.created_at,
         checks=checks
     )
+
 
 @routes.route('/urls/<int:url_id>/checks', methods=['POST'])
 def urls_checks(url_id):
