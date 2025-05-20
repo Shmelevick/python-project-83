@@ -2,7 +2,14 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from urllib.parse import urlparse
 import validators
 
-from .models import find_url_by_name, insert_url, get_all_urls, get_url_by_id
+from .models import (
+    find_url_by_name,
+    insert_url,
+    get_all_urls,
+    get_url_by_id,
+    get_check_data,
+    insert_check
+)
 from .logger import get_logger
 
 routes = Blueprint('routes', __name__)
@@ -17,7 +24,7 @@ def index():
 def urls():
     if request.method == 'POST':
         url = request.form.get('url')
-        logger.info(f"Получен URL из формы: {url}")
+        logger.info("Получен URL из формы: %s", url)
 
         if not url or len(url) > 255 or not validators.url(url):
             flash('Некорректный URL', 'danger')
@@ -48,13 +55,21 @@ def url_detail(url_id):
     url_data = get_url_by_id(url_id)
 
     if not url_data:
-        logger.error(f"URL с ID {url_id} не найден")
+        logger.error("URL с ID %s не найден", url_id)
         flash('Ошибка: эта страница не должна была открыться', 'danger')
         return redirect(url_for('routes.urls'))
+    checks = get_check_data(url_id)
 
     return render_template(
         'url_detail.html',
         url_id=url_data.id,
         name=url_data.name,
-        created_at=url_data.created_at
+        created_at=url_data.created_at,
+        checks=checks
     )
+
+@routes.route('/urls/<int:url_id>/checks', methods=['POST'])
+def urls_checks(url_id):
+    insert_check(url_id)
+
+    return redirect(url_for('routes.url_detail', url_id=url_id))

@@ -9,15 +9,16 @@ def find_url_by_name(name):
     with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
         cur.execute('SELECT id FROM urls WHERE name = %s;', (name,))
         result = cur.fetchone()
-        logger.info(f"Поиск URL: {name} — найден: {result is not None}")
+        logger.info("Поиск URL: %s — найден: %s", name, result is not None)
         return result
 
 def insert_url(name):
     conn = get_db_connection()
     with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
-        cur.execute('INSERT INTO urls (name) VALUES (%s) RETURNING id;', (name,))
+        query = 'INSERT INTO urls (name) VALUES (%s) RETURNING id;'
+        cur.execute(query, (name,))
         result = cur.fetchone()
-        logger.info(f"Добавлен новый URL: {name} с id {result.id}")
+        logger.info("Добавлен новый URL: %s с id %s", name, result.id)
         conn.commit()
         return result.id
 
@@ -34,5 +35,27 @@ def get_url_by_id(url_id):
     with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
         cur.execute('SELECT * FROM urls WHERE id = %s;', (url_id,))
         result = cur.fetchone()
-        logger.info(f"Получены данные по ID: {url_id}")
+        logger.info("Получены данные по ID: %s", url_id)
         return result
+
+def get_check_data(url_id):
+    conn = get_db_connection()
+    with conn.cursor(cursor_factory=NamedTupleCursor) as cur:
+        cur.execute(
+            'SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC;',
+            (url_id,)
+        )
+        result = cur.fetchall()
+        logger.info('Получены данные из url_checks по url_id: %s', url_id)
+        return result
+
+def insert_check(url_id):
+    conn = get_db_connection()
+    with conn.cursor() as cur:
+        query = """
+        INSERT INTO url_checks (url_id)
+        VALUES (%s);
+        """
+        cur.execute(query, (url_id, ))
+        conn.commit()
+        logger.info("Вставлены данные о проверке url_id = %s", url_id)
