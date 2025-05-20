@@ -38,10 +38,7 @@ def urls():
         if not url or len(url) > 255 or not validators.url(url):
             logger.warning("Невалидный URL")
             flash('Некорректный URL', 'danger')
-            return make_response(
-                render_template('index.html', error='Некорректный URL'),
-                422
-            )
+            return make_response(render_template('index.html'), 422)
 
         normalized_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
         existing = find_url_by_name(normalized_url)
