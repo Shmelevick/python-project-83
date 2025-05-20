@@ -66,6 +66,7 @@ def check_url(url_id):
     status_code = response.status_code
 
     soup = BeautifulSoup(response.text, 'html.parser')
+    
     title = soup.title.string if soup.title else ''
     description_tag = soup.find('meta', attrs={'name': 'description'})
     description = (
@@ -75,7 +76,12 @@ def check_url(url_id):
     )
     h1_tag = soup.find('h1')
     h1 = h1_tag.text.strip() if h1_tag else ''
+    _insert_checks(url_id, h1, status_code, title, description)
+    _update_urls(status_code, url_id)
+    
 
+
+def _insert_checks(url_id, h1, status_code, title, description):
     with conn.cursor() as cur:
         query = """
         INSERT INTO url_checks (url_id, h1, status_code, title, description)
@@ -87,17 +93,19 @@ def check_url(url_id):
             "Вставлены данные о проверке url_id = %s в url_checks",
             url_id
         )
+
+
+def _update_urls(status_code, url_id): 
     with conn.cursor() as cur:
         query = """
         UPDATE urls
         SET last_check = CURRENT_DATE, status_code = %s
         WHERE id = %s
         """
-        print(url_id, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         cur.execute(query, (status_code, url_id))
         conn.commit()
         logger.info(
-            "Вставлены 'last_check', 'status_code' url_id = %s в urls",
-            url_id
+            "Вставлены 'last_check', 'status_code' = %s, url_id = %s в urls",
+            status_code, url_id
         )
 
